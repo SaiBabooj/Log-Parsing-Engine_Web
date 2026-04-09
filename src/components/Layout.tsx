@@ -101,14 +101,11 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-72 flex-col">
         <SidebarContent />
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header */}
         <header className="h-16 border-b bg-card/50 backdrop-blur-md flex items-center justify-between px-4 md:px-8 sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -169,7 +166,6 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </header>
 
-        {/* Scrollable Area */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
           {children}
         </main>

@@ -56,7 +56,6 @@ export default function Upload({ onUploadSuccess }: UploadProps) {
     const formData = new FormData();
     formData.append('file', file);
 
-    // Simulate progress for better UX
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 90) {

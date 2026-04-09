@@ -15,7 +15,6 @@ const __dirname = path.dirname(__filename);
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const PORT = 3000;
 
-// Mock user for demo
 const MOCK_USER = {
   id: '1',
   email: 'admin@kluniversity.in',
@@ -47,7 +46,6 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Auth Middleware
   const authenticateToken = (req: any, res: any, next: any) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -61,7 +59,6 @@ async function startServer() {
     });
   };
 
-  // Auth Routes
   app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     if (email === MOCK_USER.email && bcrypt.compareSync(password, MOCK_USER.password)) {
@@ -76,7 +73,6 @@ async function startServer() {
     res.json({ user: req.user });
   });
 
-  // Log Routes
   app.get('/api/logs', authenticateToken, (req, res) => {
     res.json(logs);
   });
@@ -87,7 +83,6 @@ async function startServer() {
     const uniqueIps = new Set(logs.map(l => l.ip)).size;
     const avgResponseTime = logs.length > 0 ? logs.reduce((acc, l) => acc + l.responseTime, 0) / logs.length : 0;
 
-    // Top endpoints
     const endpoints: Record<string, number> = {};
     logs.forEach(l => {
       endpoints[l.path] = (endpoints[l.path] || 0) + 1;
@@ -106,7 +101,6 @@ async function startServer() {
     });
   });
 
-  // File Upload
   const upload = multer({ dest: 'uploads/' });
   app.post('/api/logs/upload', authenticateToken, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -118,8 +112,6 @@ async function startServer() {
 
       lines.forEach(line => {
         if (!line.trim()) return;
-        // Simple regex for common log format or similar
-        // [2024-03-20 10:00:00] GET /api/users 200 45ms 192.168.1.1 "Mozilla/5.0..."
         const match = line.match(/\[(.*?)\] (\w+) (.*?) (\d+) (\d+)ms (.*?) "(.*?)"/);
         if (match) {
           newLogs.push({
@@ -138,7 +130,6 @@ async function startServer() {
       logs = [...newLogs, ...logs].slice(0, MAX_LOGS);
       io.emit('logs:batch', newLogs);
       
-      // Cleanup
       fs.unlinkSync(req.file.path);
       
       res.json({ message: `Successfully processed ${newLogs.length} logs`, count: newLogs.length });
@@ -147,11 +138,9 @@ async function startServer() {
     }
   });
 
-  // Socket.IO logic
   io.on('connection', (socket) => {
     console.log('Client connected');
     
-    // Simulate live logs
     const interval = setInterval(() => {
       const methods = ['GET', 'POST', 'PUT', 'DELETE'];
       const paths = ['/api/users', '/api/products', '/api/orders', '/api/auth/login', '/api/stats', '/dashboard', '/settings'];
@@ -180,7 +169,6 @@ async function startServer() {
     });
   });
 
-  // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
