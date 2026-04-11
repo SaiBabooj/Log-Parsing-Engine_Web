@@ -1,0 +1,5 @@
+{
+  "name": "WebLog Analyzer",
+  "description": "Real-time web server log analysis platform with dashboard, metrics, and live streaming.",
+  "requestFramePermissions": []
+}
